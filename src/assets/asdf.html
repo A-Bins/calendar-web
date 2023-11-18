@@ -1,21 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Svelte + TS</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <!-- <script type="module" src="/src/main.ts"></script> -->
-    
+	<head>
+		<title>three.js webgl - loaders - OBJ loader</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+
+	<body>
+		<div id="info">
+		<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - OBJLoader test
+		</div>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
 		<script type="module">
 
 			import * as THREE from 'three';
 
 			import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 			let camera, scene, renderer;
 
@@ -46,11 +57,12 @@
 
 					object.traverse( function ( child ) {
 
+						if ( child.isMesh ) child.material.map = texture;
 
 					} );
 
-					object.position.y = -0.9;
-					object.scale.setScalar(1);
+					object.position.y = - 0.95;
+					object.scale.setScalar( 0.01 );
 					scene.add( object );
 
 					render();
@@ -59,6 +71,11 @@
 
 				const manager = new THREE.LoadingManager( loadModel );
 
+				// texture
+
+				const textureLoader = new THREE.TextureLoader( manager );
+				const texture = textureLoader.load( 'textures/uv_grid_opengl.jpg', render );
+				texture.colorSpace = THREE.SRGBColorSpace;
 
 				// model
 
@@ -76,7 +93,7 @@
 				function onError() {}
 
 				const loader = new OBJLoader( manager );
-				loader.load( 'objfile.obj', function ( obj ) {
+				loader.load( 'models/obj/male02/male02.obj', function ( obj ) {
 
 					object = obj;
 
@@ -91,7 +108,7 @@
 
 				//
 
-				const controls = new  OrbitControls( camera, renderer.domElement );
+				const controls = new  OrbitControls( camera, renderer.domElement );
 				controls.minDistance = 2;
 				controls.maxDistance = 5;
 				controls.addEventListener( 'change', render );
@@ -118,5 +135,6 @@
 			}
 
 		</script>
-  </body>
+
+	</body>
 </html>
